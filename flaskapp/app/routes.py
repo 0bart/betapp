@@ -1,15 +1,9 @@
+from flask import render_template
 from app import app
-
-with open('config.json') as file_conf:
-    conf = json.load(file_conf)
-
-db_string = 'mongodb://{}:{}@{}:{}'.format(conf['mongo']['user'], conf['mongo']['pwd'], conf['mongo']['host'], conf['mongo']['port'])
-
-client = pymongo.MongoClient(db_string)
-matches = client.matches.betMatches
+from app.db import get_last_n_matches
 
 @app.route('/')
 @app.route('/index')
 def index():
-    matches_ = matches.aggregate(['$match': {'prediction': {"$eq": "score.result"}}])
-    return 
+    matches = get_last_n_matches(10)
+    return render_template('index.html', title='Home', matches=matches)

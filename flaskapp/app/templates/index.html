@@ -1,0 +1,53 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}This is an example page{% endblock %}
+
+{% block navbar %}
+    <div class="navbar navbar-fixed-top">
+        <!-- ... -->
+    </div>
+{% endblock %}
+
+{% block content %}
+<img src="https://unsplash.com/photos/I9HyW30buuQ" class="img-fluid" alt="Responsive image">
+
+<div class="table-responsive">
+    <table class="table table-hover table-dark table-sm">
+        <tr>
+            <th>Home</th>
+            <th>Away</th>
+            <th>Result home</th>
+            <th>Result away</th>
+            <th>Prediction</th>
+            <th>BET H</th>
+            <th>BET A</th>
+            <th>BET D</th>
+            <th>Correctness</th>
+            <th>Gain</th>
+        </tr>
+        {% for item in matches %}
+        <tr>
+            <td>{{ item.home_team }}</td>
+            <td>{{ item.away_team }}</td>
+            <td>{{ item.score.score_home }}</td>
+            <td>{{ item.score.score_away }}</td>
+            <td>{{ item.prediction }}</td>
+            <td>{{ item.bet.bet_home }}</td>
+            <td>{{ item.bet.bet_away }}</td>
+            <td>{{ item.bet.bet_draw }}</td>
+            {% if item.prediction == item.score.result %}
+                <td class="bg-success">Nice</td>
+                <td>+{{ 100 * item.bet.bet_draw }}</td>
+            {% elif item.prediction == 'SKIP' %}
+                <td>Skipped</td>
+                <td>0</td>
+            {% else %}
+                <td class="bg-warning">Bad!</td>
+                <td>-100</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}
