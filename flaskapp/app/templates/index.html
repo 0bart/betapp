@@ -1,53 +1,22 @@
 {% extends "bootstrap/base.html" %}
 
-{% block title %}This is an example page{% endblock %}
+{% block title %}Betapp{% endblock %}
 
 {% block navbar %}
-    <div class="navbar navbar-fixed-top">
-        <!-- ... -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Navbar</a>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="{{ url_for('tables') }}">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('sim') }}">Simulations</a>
+            </li>
+        </ul>
     </div>
+</nav>
 {% endblock %}
 
 {% block content %}
-<img src="https://unsplash.com/photos/I9HyW30buuQ" class="img-fluid" alt="Responsive image">
-
-<div class="table-responsive">
-    <table class="table table-hover table-dark table-sm">
-        <tr>
-            <th>Home</th>
-            <th>Away</th>
-            <th>Result home</th>
-            <th>Result away</th>
-            <th>Prediction</th>
-            <th>BET H</th>
-            <th>BET A</th>
-            <th>BET D</th>
-            <th>Correctness</th>
-            <th>Gain</th>
-        </tr>
-        {% for item in matches %}
-        <tr>
-            <td>{{ item.home_team }}</td>
-            <td>{{ item.away_team }}</td>
-            <td>{{ item.score.score_home }}</td>
-            <td>{{ item.score.score_away }}</td>
-            <td>{{ item.prediction }}</td>
-            <td>{{ item.bet.bet_home }}</td>
-            <td>{{ item.bet.bet_away }}</td>
-            <td>{{ item.bet.bet_draw }}</td>
-            {% if item.prediction == item.score.result %}
-                <td class="bg-success">Nice</td>
-                <td>+{{ 100 * item.bet.bet_draw }}</td>
-            {% elif item.prediction == 'SKIP' %}
-                <td>Skipped</td>
-                <td>0</td>
-            {% else %}
-                <td class="bg-warning">Bad!</td>
-                <td>-100</td>
-            {% endif %}
-        </tr>
-        {% endfor %}
-    </table>
-</div>
-
 {% endblock %}

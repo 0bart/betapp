@@ -1,0 +1,79 @@
+{% extends "index.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+<div class="table-responsive">
+    <h2>Fixtures</h2>
+    <table class="table table-hover table-dark table-sm">
+        <tr>
+            <th>Home</th>
+            <th>Away</th>
+            <th>Bookmaker</th>
+            <th>BET H</th>
+            <th>BET A</th>
+            <th>BET D</th>
+            <th>P1</th>
+            <th>P2</th>
+            <th>PX</th>
+            <th>Prediction</th>
+        </tr>
+        {% for item in fixtures %}
+        <tr>
+            <td>{{ item.home_team }}</td>
+            <td>{{ item.away_team }}</td>
+            <td>{{ item.bets.0.bet_name }}</td>
+            <td>{{ item.bets.0.bet_home }}</td>
+            <td>{{ item.bets.0.bet_away }}</td>
+            <td>{{ item.bets.0.bet_draw }}</td>
+            <td>{{ item.probabilities.0.p1 }}</td>
+            <td>{{ item.probabilities.0.p2 }}</td>
+            <td>{{ item.probabilities.0.pX }}</td>
+            <td>{{ item.probabilities.0.prediction }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div class="table-responsive">
+    <h2>Results</h2>
+    <table class="table table-hover table-dark table-sm">
+        <tr>
+            <th>Home</th>
+            <th>Away</th>
+            <th>Result home</th>
+            <th>Result away</th>
+            <th>Prediction</th>
+            <th>BET H</th>
+            <th>BET A</th>
+            <th>BET D</th>
+            <th>Correctness</th>
+            <th>Gain</th>
+        </tr>
+        {% for item in results %}
+        <tr>
+            <td>{{ item.home_team }}</td>
+            <td>{{ item.away_team }}</td>
+            <td>{{ item.score.score_home }}</td>
+            <td>{{ item.score.score_away }}</td>
+            <td>{{ item.probabilities.0.prediction }}</td>
+            <td>{{ item.bets.0.bet_home }}</td>
+            <td>{{ item.bets.0.bet_away }}</td>
+            <td>{{ item.bets.0.bet_draw }}</td>
+            {% if item.probabilities.0.prediction == item.score.result %}
+                <td class="bg-success">Yes :)</td>
+                <td>+{{ 100 * item.bets.0.bet_draw }}</td>
+            {% elif item.probabilities.0.prediction == 'SKIP' %}
+                <td>Skipped</td>
+                <td>0</td>
+            {% else %}
+                <td class="bg-warning">No :(</td>
+                <td>-100</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}
