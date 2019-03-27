@@ -1,6 +1,7 @@
 venv
 *config.json
 *data.json
+nginx.conf
 *.swp
 *.swo
 *.pyc
