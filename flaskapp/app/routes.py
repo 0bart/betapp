@@ -2,6 +2,8 @@ from flask import render_template
 from app import app
 from app.db import get_result_n_matches, get_fixture_n_matches
 
+app.jinja_env.filters['zip'] = zip
+
 @app.route('/')
 @app.route('/tables')
 def tables():
