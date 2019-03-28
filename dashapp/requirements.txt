@@ -1,0 +1,8 @@
+dash==0.40.0
+dash-core-components==0.45.0
+dash-html-components==0.15.0
+dash-renderer==0.21.0
+dash-table==3.6.0
+jupyter-core==4.4.0
+plotly==3.7.1
+pymongo==3.7.2

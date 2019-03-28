@@ -21,9 +21,8 @@ def calculate_bid(bid_type, bid_base, prob_success=0, odds_success=0):
     else:
         return bid_base
 
-def get_last_n_matches_for_plot(n, bid_base=100, bid_type='flat'):
-    pipeline = [{"$sort": {"match_time": -1}}, {"$project": {"_id": 0, "home_team": 1, "away_team": 1, "match_time": 1,
-                                                             "score": 1, "probabilities": 1, "bets": 1}}, {"$limit": n}]
+def get_last_n_matches_for_plot(n, bid_base=100, bid_type='flat', **kw):
+    pipeline = [{'$match': {'match_time': {'$gte': kw['start_date'], '$lt': kw['end_date']}}}, {"$sort": {"match_time": 1}}, {"$project": {"_id": 0, "home_team": 1, "away_team": 1, "match_time": 1, "score": 1, "probabilities": 1, "bets": 1}}, {"$limit": n}]
     matches = results.aggregate(pipeline)
     X = [i for i in range(n+1)]
     Y = [0]
@@ -59,7 +58,6 @@ def get_last_n_matches_for_plot(n, bid_base=100, bid_type='flat'):
                     .format(item['match_time'], item['home_team'], item['away_team'], item['score']['score_home'],
                             item['score']['score_away'], item['probabilities'][0]['prediction'],
                             item['score']['result'], _bid, _gain))
-
     return X, Y, text
 
 if __name__ == '__main__':
