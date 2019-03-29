@@ -3,137 +3,137 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-
-<div class="container table-responsive">
-    <h2>Fixtures</h2>
-    <table class="table table-hover table-borderless table-dark table-sm">
-	<thead>
-        <tr>
-	    <th>Date</th>
-            <th>Home</th>
-            <th>Away</th>
-            <th>General prediction</th>
-	    <th>Updated</th>
-        </tr>
-	</thead>
-	<tbody>
-        {% for item in fixtures %}
-        <tr data-toggle="collapse" data-target="#collapse_fixtures{{ loop.index }}">
-	        <td>{{ item.match_time }}</td>
-            <td>{{ item.home_team }}</td>
-            <td>{{ item.away_team }}</td>
-	        <td>{{ item.probabilities.0.prediction }}</td>
-            <td>{{ item.last_updated }}</td>
-        </tr>
-        <tr id="collapse_fixtures{{ loop.index }}" class="collapse in">
-            <td colspan="5">
-                <table class="table-borderless table-sm">
-                    <tr>
-                        <th>Bet name</th>
-                        <th>1</th>
-                        <th>X</th>
-                        <th>2</th>
-                        <th>p1</th>
-                        <th>pX</th>
-                        <th>p2</th>
-                        <th>Prediction</th>
-                    </tr>
-                    {% for bookmaker, prob in item.bets|zip(item.probabilities) %}
-                    <tr>
-                        <td>{{ bookmaker.bet_name }}</td>
-                        <td>{{ bookmaker.bet_home }}</td>
-                        <td>{{ bookmaker.bet_draw }}</td>
-                        <td>{{ bookmaker.bet_away }}</td>
-                        <td>{{ prob.p1 }}</td>
-                        <td>{{ prob.pX }}</td>
-                        <td>{{ prob.p2 }}</td>
-                        <td>{{ prob.prediction }}</td>
-                    </tr>
-                    {% endfor %}
-                </table>
-            </td>
-	</tr>
-	{% endfor %}
+<section id="projects" class="projects-section bg-light">
+    <div class="container table-responsive">
+        <h1 class="text-center">Fixtures</h1>
+        <table class="table table-hover table-borderless">
+        <thead class="thead-light">
+            <tr>
+                <th>Date</th>
+                <th>Home</th>
+                <th>Away</th>
+                <th>General prediction</th>
+                <th>Updated</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in fixtures %}
+            <tr data-toggle="collapse" data-target="#collapse_fixtures{{ loop.index }}">
+                <td> <i class="fas fa-plus"></i> {{ item.match_time }}</td>
+                <td>{{ item.home_team }}</td>
+                <td>{{ item.away_team }}</td>
+                <td>{{ item.probabilities.0.prediction }}</td>
+                <td>{{ item.last_updated }}</td>
+            </tr>
+            <tr id="collapse_fixtures{{ loop.index }}" class="collapse in">
+                <td colspan="5">
+                    <table class="table-borderless table-sm mx-auto">
+                        <tr>
+                            <th>Bet name</th>
+                            <th>1</th>
+                            <th>X</th>
+                            <th>2</th>
+                            <th>p1</th>
+                            <th>pX</th>
+                            <th>p2</th>
+                            <th>Prediction</th>
+                        </tr>
+                        {% for bookmaker, prob in item.bets|zip(item.probabilities) %}
+                        <tr>
+                            <td>{{ bookmaker.bet_name }}</td>
+                            <td>{{ bookmaker.bet_home }}</td>
+                            <td>{{ bookmaker.bet_draw }}</td>
+                            <td>{{ bookmaker.bet_away }}</td>
+                            <td>{{ prob.p1 }}</td>
+                            <td>{{ prob.pX }}</td>
+                            <td>{{ prob.p2 }}</td>
+                            <td>{{ prob.prediction }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </td>
+            </tr>
+            {% endfor %}
         </tbody>
-    </table>
-</div>
+        </table>
+    </div>
 
-<div class="container table-responsive">
-    <h2>Results</h2>
-    <table class="table table-hover table-borderless table-dark table-sm">
-	<thead>
-        <tr>
-	    <th>Date</th>
-            <th>Home</th>
-            <th>.</th>
-            <th>.</th>
-            <th>Away</th>
-            <th>General prediction</th>
-            <th>Correctness</th>
-        </tr>
-	</thead>
-	<tbody>
-        {% for item in results %}
-        <tr data-toggle="collapse" data-target="#collapse_results{{ loop.index }}">
-            <td>{{ item.match_time }}</td>
-            <td>{{ item.home_team }}</td>
-            <td>{{ item.score.score_home }}</td>
-            <td>{{ item.score.score_away }}</td>
-            <td>{{ item.away_team }}</td>
-	        <td>{{ item.probabilities.0.prediction }} <span class="glyphicon glyphicon-plus"></span></td>
-            {% if item.probabilities.0.prediction == item.score.result %}
-                <td class="bg-success">Yes :)</td>
-            {% elif item.probabilities.0.prediction == 'SKIP' %}
-                <td>Skipped</td>
-            {% else %}
-                <td class="bg-warning">No :(</td>
-            {% endif %}
-        </tr>
-        <tr id="collapse_results{{ loop.index }}" class="collapse in">
-            <td colspan="5">
-                <table class="table-borderless table-sm">
-                    <tr>
-                        <th>Bet name</th>
-                        <th>1</th>
-                        <th>X</th>
-                        <th>2</th>
-                        <th>p1</th>
-                        <th>pX</th>
-                        <th>p2</th>
-                        <th>Prediction</th>
-                        <th>Gain</th>
-                    </tr>
-                    {% for bookmaker, prob in item.bets|zip(item.probabilities) %}
-                    <tr>
-                        <td>{{ bookmaker.bet_name }}</td>
-                        <td>{{ bookmaker.bet_home }}</td>
-                        <td>{{ bookmaker.bet_draw }}</td>
-                        <td>{{ bookmaker.bet_away }}</td>
-                        <td>{{ prob.p1 }}</td>
-                        <td>{{ prob.pX }}</td>
-                        <td>{{ prob.p2 }}</td>
-                        <td>{{ prob.prediction }}</td>
-                        {% if item.probabilities.0.prediction == item.score.result %}
-                            {% if item.score.result == 'HOME_TEAM' %}
-                                <td>+{{ 100 * bookmaker.bet_home - 100 }}</td>
-                            {% elif item.score.result == 'AWAY_TEAM' %}
-                                <td>+{{ 100 * bookmaker.bet_away - 100 }}</td>
-                            {% elif item.score.result == 'DRAW' %}
-                                <td>+{{ 100 * bookmaker.bet_draw - 100 }}</td>
+    <div class="container table-responsive">
+        <h1 class="text-center">Results</h1>
+        <table class="table table-hover table-borderless">
+        <thead class="thead-light">
+            <tr>
+                <th>Date</th>
+                <th>Home</th>
+                <th>.</th>
+                <th>.</th>
+                <th>Away</th>
+                <th>General prediction</th>
+                <th>Correctness</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in results %}
+            <tr data-toggle="collapse" data-target="#collapse_results{{ loop.index }}">
+                <td> <i class="fas fa-plus"></i> {{ item.match_time }}</td>
+                <td>{{ item.home_team }}</td>
+                <td>{{ item.score.score_home }}</td>
+                <td>{{ item.score.score_away }}</td>
+                <td>{{ item.away_team }}</td>
+                <td>{{ item.probabilities.0.prediction }}</td>
+                {% if item.probabilities.0.prediction == item.score.result %}
+                    <td class="bg-success">Yes :)</td>
+                {% elif item.probabilities.0.prediction == 'SKIP' %}
+                    <td>Skipped</td>
+                {% else %}
+                    <td class="bg-warning">No :(</td>
+                {% endif %}
+            </tr>
+            <tr id="collapse_results{{ loop.index }}" class="collapse in">
+                <td colspan="7">
+                    <table class="table-borderless table-sm mx-auto">
+                        <tr>
+                            <th>Bet name</th>
+                            <th>1</th>
+                            <th>X</th>
+                            <th>2</th>
+                            <th>p1</th>
+                            <th>pX</th>
+                            <th>p2</th>
+                            <th>Prediction</th>
+                            <th>Gain</th>
+                        </tr>
+                        {% for bookmaker, prob in item.bets|zip(item.probabilities) %}
+                        <tr>
+                            <td>{{ bookmaker.bet_name }}</td>
+                            <td>{{ bookmaker.bet_home }}</td>
+                            <td>{{ bookmaker.bet_draw }}</td>
+                            <td>{{ bookmaker.bet_away }}</td>
+                            <td>{{ prob.p1 }}</td>
+                            <td>{{ prob.pX }}</td>
+                            <td>{{ prob.p2 }}</td>
+                            <td>{{ prob.prediction }}</td>
+                            {% if item.probabilities.0.prediction == item.score.result %}
+                                {% if item.score.result == 'HOME_TEAM' %}
+                                    <td>+{{ 100 * bookmaker.bet_home - 100 }}</td>
+                                {% elif item.score.result == 'AWAY_TEAM' %}
+                                    <td>+{{ 100 * bookmaker.bet_away - 100 }}</td>
+                                {% elif item.score.result == 'DRAW' %}
+                                    <td>+{{ 100 * bookmaker.bet_draw - 100 }}</td>
+                                {% endif %}
+                            {% elif item.probabilities.0.prediction == 'SKIP' %}
+                                <td>0</td>
+                            {% else %}
+                                <td>-100</td>
                             {% endif %}
-                        {% elif item.probabilities.0.prediction == 'SKIP' %}
-                            <td>0</td>
-                        {% else %}
-                            <td>-100</td>
-                        {% endif %}
-                    </tr>
-                    {% endfor %}
-                </table>
-            </td>
-	</tr>
-	{% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </td>
+            </tr>
+            {% endfor %}
         </tbody>
-    </table>
-</div>
-
+        </table>
+    </div>
+</section>
 {% endblock %}
