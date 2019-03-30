@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, request
 from app import app
 from app.db import get_result_n_matches, get_fixture_n_matches
 
@@ -10,12 +10,16 @@ def index():
     return render_template('index.html', title='betapp - About')
 
 @app.route('/tables')
-@app.route('/tables/<int:page>')
-def tables(page=0):
-    total_fix, fixtures = get_fixture_n_matches(5, page)
-    results = get_result_n_matches(15)
-    return render_template('tables.html', title='betapp - Tables', fixtures=fixtures, total_fix=total_fix, page=page,
-                           results=results)
+def tables():
+    page_fix = int(request.args.get('page_fix', 0))
+    page_res = int(request.args.get('page_res', 0))
+    n_fix = 6
+    n_res = 6
+    total_fix, fixtures = get_fixture_n_matches(n_fix, page_fix)
+    total_res, results = get_result_n_matches(n_res, page_res)
+    return render_template('tables.html', title='betapp - Tables', fixtures=fixtures, total_fix=total_fix,
+                           page_fix=page_fix, n_fix=n_fix, results=results, total_res=total_res, page_res=page_res,
+                           n_res=n_res)
 
 @app.route('/sim')
 def sim():
