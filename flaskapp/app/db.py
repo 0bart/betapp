@@ -12,12 +12,13 @@ client = pymongo.MongoClient(db_string)
 fixtures = client.betapp.fixtures
 results = client.betapp.results
 
-def get_fixture_n_matches(n):
+def get_fixture_n_matches(n, page):
+    total = fixtures.count()
     pipeline = [{"$sort": {"match_time": -1}}, {"$project": {"_id": 0, "home_team": 1, "away_team": 1, "match_time": 1,
                                                              "score": 1, "probabilities": 1, "bets": 1,
-                                                             "last_updated": 1}}, {"$limit": n}]
+                                                             "last_updated": 1}}, {'$skip': n * page}, {"$limit": n}]
     matches = fixtures.aggregate(pipeline)
-    return matches
+    return total, matches
 
 def get_result_n_matches(n):
     pipeline = [{"$sort": {"match_time": -1}}, {"$project": {"_id": 0, "home_team": 1, "away_team": 1, "match_time": 1,
@@ -26,4 +27,4 @@ def get_result_n_matches(n):
     return matches
 
 if __name__ == '__main__':
-    get_last_n_matches_for_plot(10, 100, 'kelly_crit')
+    get_fixture_n_matches(10, 1)

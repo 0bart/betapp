@@ -4,7 +4,7 @@
 
 {% block content %}
 <section id="projects" class="projects-section bg-light">
-    <div class="container table-responsive">
+    <div id="fixtures-table" class="container table-responsive">
         <h1 class="text-center">Fixtures</h1>
         <table class="table table-hover table-borderless">
         <thead class="thead-light">
@@ -56,6 +56,14 @@
             {% endfor %}
         </tbody>
         </table>
+        Showing {{ page * 5 }} - {{ page * 5 + 5 }} from total {{ total_fix }} results
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="{{ url_for('tables', page=page-1, _anchor='fixtures-table') }}">Previous</a></li>
+            {% for i in range(0, (total_fix/5)|round(0, 'floor')|int + 1) %}
+            <li class="page-item"><a class="page-link" href="{{ url_for('tables', page=i, _anchor='fixtures-table') }}">{{ i + 1 }}</a></li>
+            {% endfor %}
+            <li class="page-item"><a class="page-link" href="{{ url_for('tables', page=page+1, _anchor='fixtures-table') }}">Next</a></li>
+        </ul>
     </div>
 
     <div class="container table-responsive">

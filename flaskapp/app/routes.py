@@ -7,15 +7,15 @@ app.jinja_env.filters['zip'] = zip
 @app.route('/')
 @app.route('/about')
 def index():
-    fixtures = get_fixture_n_matches(15)
-    results = get_result_n_matches(15)
-    return render_template('index.html', title='betapp - About', fixtures=fixtures, results=results)
+    return render_template('index.html', title='betapp - About')
 
 @app.route('/tables')
-def tables():
-    fixtures = get_fixture_n_matches(15)
+@app.route('/tables/<int:page>')
+def tables(page=0):
+    total_fix, fixtures = get_fixture_n_matches(5, page)
     results = get_result_n_matches(15)
-    return render_template('tables.html', title='betapp - Tables', fixtures=fixtures, results=results)
+    return render_template('tables.html', title='betapp - Tables', fixtures=fixtures, total_fix=total_fix, page=page,
+                           results=results)
 
 @app.route('/sim')
 def sim():
