@@ -6,7 +6,6 @@ import hashlib
 import json
 import pymongo
 import math
-import sys
 
 with open('config.json') as file_conf:
     conf = json.load(file_conf)
@@ -41,27 +40,26 @@ def predict_result(odd_H, odd_A, odd_D, prob_down=0.17, prob_up=0.36):
 
 def find_matches():
 
-    print("I am looging matches")
-
-    uri = conf['find_matches']['uri']
     api_key = conf['find_matches']['api_key']
+    uri = conf['find_matches']['uri'].format(api_key)
 
-    with open("results.json", "r") as result:
-        results = json.load(result)
+    odds = requests.get(uri)
+    result = odds.json()
 
     matched_count = 0
     modified_count = 0
 
-    for match in results['data']:
+    for match in result['data']:
         match_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(match['commence_time']))
         home_team = match['home_team']
         index_ = match['teams'].index(home_team)
-        #away_team = match['teams'][1-index_]
-        away_team = [team for team in match['teams'] if team != home_team][0]
+        away_team = match['teams'][1-index_]
+        #away_team = [team for team in match['teams'] if team != home_team][0]
         bets = []
         probs = []
         for bookmaker in match['sites']:
-            odd1_H, odd1_A, odd1_D, odd1_name = bookmaker['odds']['h2h'][index_], bookmaker['odds']['h2h'][1-index_], bookmaker['odds']['h2h'][2], bookmaker['site_nice']
+            odd1_H, odd1_A, odd1_D, odd1_name = bookmaker['odds']['h2h'][index_], bookmaker['odds']['h2h'][1-index_], \
+                                                bookmaker['odds']['h2h'][2], bookmaker['site_nice']
             p1, p2, pX, prediction = predict_result(odd1_H, odd1_A, odd1_D)
             _bets = {
                 "bet_name": odd1_name,
@@ -87,7 +85,7 @@ def find_matches():
               'bets': bets,
               'probabilities': probs,
               'match_hash': match_hash,
-              'last_updated': datetime.datetime.now()
+              'last_updated': time.strftime('%H:%M:%S')
               }
 
         update_one_output = fixtures.update_one({'match_hash': match_hash}, {'$set': doc}, upsert=True)
@@ -99,16 +97,15 @@ def find_matches():
 
 def find_results():
 
-    uri = conf['find_results']['uri']
-    api_key = conf['find_results']['api_key']
+    dateFrom = (datetime.date.today() - datetime.timedelta(1)).strftime('%Y-%m-%d')
+    dateTo = datetime.date.today().strftime('%Y-%m-%d')
 
+    uri = conf['find_results']['uri'].format(dateFrom, dateTo)
+    api_key = conf['find_results']['api_key']
     headers = {'X-Auth-Token': api_key}
     
-    #result = requests.get(uri, headers=headers)
-    #result = result.json()
-    
-    with open("data.json", "r") as resultx:
-        result = json.load(resultx)
+    result = requests.get(uri, headers=headers)
+    result = result.json()
 
     matched_count = 0
     modified_count = 0
@@ -126,29 +123,27 @@ def find_results():
                     'score_away': item['score']['fullTime']['awayTeam'],
                     'result': item['score']['winner'],
                     },
-                'last_updated': datetime.datetime.now(),
+                'last_updated': time.strftime('%H:%M:%S')
                 }
 
         find_one_output = fixtures.find_one({'match_hash': match_hash})
-        doc.update(find_one_output)
+        if find_one_output:
+            doc.update(find_one_output)
 
-        #delete_one_output = fixtures.delete_one({'match_hash': match_hash})
+            delete_one_output = fixtures.delete_one({'match_hash': match_hash})
 
-        update_one_output = results.update_one({'match_hash': match_hash}, {'$set': doc}, upsert=True)
-        matched_count += update_one_output.matched_count
-        modified_count += update_one_output.modified_count
+            update_one_output = results.update_one({'match_hash': match_hash}, {'$set': doc}, upsert=True)
+            matched_count += update_one_output.matched_count
+            modified_count += update_one_output.modified_count
+        else:
+            pass
 
     return
 
 
-schedule.every(5).minutes.do(find_matches)
-schedule.every(5).minutes.do(find_results)
+schedule.every().day.at("08:00").do(find_matches)
+schedule.every().hour.do(find_results)
 
 while True:
     schedule.run_pending()
-    print("I am in while loop")
     time.sleep(5)
-#if __name__ == '__main__':
-#    find_matches()
-#    time.sleep(5)
-#    find_results()

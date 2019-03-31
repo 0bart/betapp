@@ -5,9 +5,6 @@ from app import app
 with app.open_resource('config.json') as file_conf:
     conf = json.load(file_conf)
 
-#with open('config.json') as file_conf:
-#    conf = json.load(file_conf)
-
 db_string = 'mongodb://{}:{}@{}:{}'.format(conf['mongo']['user'], conf['mongo']['pwd'],
                                            conf['mongo']['host'], conf['mongo']['port'])
 
