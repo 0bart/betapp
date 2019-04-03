@@ -3,7 +3,8 @@
 {% block head %}
 <!-- Custom fonts for this template -->
     {{ super() }}
-    <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet" xmlns="http://www.w3.org/1999/html"
+      xmlns="http://www.w3.org/1999/html">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 
@@ -30,10 +31,10 @@
                     <a class="nav-link js-scroll-trigger" href="{{ url_for('index') }}">About</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="{{ url_for('tables') }}">Tables</a>
+                    <a class="nav-link js-scroll-trigger" href="{{ url_for('tables', _anchor='content') }}">Tables</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="{{ url_for('sim') }}">Simulations</a>
+                    <a class="nav-link js-scroll-trigger" href="{{ url_for('sim', _anchor='content') }}">Simulations</a>
                 </li>
             </ul>
         </div>
@@ -61,7 +62,7 @@
 
 {% block content %}
 <!-- About Section -->
-<section id="about" class="about-section text-center">
+<section id="content" class="about-section text-center">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 mx-auto">
@@ -102,6 +103,92 @@
         </div>
     </div>
 </section>
+
+<section id="content2" class="explain-section bg-light text-center">
+    <div class="container">
+        <div class="row">
+            <div class="col mx-auto">
+                <h2 class="text-black mb-4">System clarification</h2>
+                <p class="text-justify">As you maybe know, odds are set <strong>according to players' types</strong>. If it is a lot of bets for home team,
+                    odd goes down etc., because bookmaker always strive to average number of bets for every option. The
+                    thing is that <strong>we can utilize</strong> this fact. People's average bets are often accurate. This fact is known as
+                    <strong>crowd's power.</strong>
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col mx-auto">
+                <h3 class="text-black mb-4 mx-auto">Tactics</h3>
+                <p class="text-center">Crucial part of this tactics is to <strong>define limits of probabilities</strong> and calculate <strong>probability of every result</strong>. It is how it is calculated.</p>
+                $$ {p_1 =\frac{1}{1 + \frac{odd1}{odd2} + \frac{odd1}{oddX}}} $$
+                $$ {p_2 =\frac{1}{1 + \frac{odd2}{odd1} + \frac{odd2}{oddX}}} $$
+                $$ {p_X =\frac{1}{1 + \frac{oddX}{odd2} + \frac{oddX}{odd1}}} $$
+                <br>
+                <p>Limit probabilities determines how big the <strong>difference between p1 and p2</strong> can be. Limit probabilities are established in <strong>experimental way</strong>.</p>
+                <p class="text-center">Then, they are <strong>two conditions</strong>:</p>
+                <ul class="list-group list-group-flush col-lg-8 mx-auto">
+                    <li class="list-group-item">1. If win probabilities of each team are similar, it means
+                    $$ {\left|p_1 - p_2\right| \leq lim\_down} $$
+                    bet on draw</li>
+                    <li class="list-group-item">2. Else if difference of probabilities are clear, it means
+                    $$ {\left|p_1 - p_2\right| \geq lim\_up} $$
+                    bet on team with higher win probability</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col mx-auto">
+                <h3 class="text-black my-4">Live example</h3>
+                <h4 class="text-black my-2">Huddersfield - West Ham</h4>
+                <p class="text-center">Round 12</p>
+                <p class="text-center">Pre-match odds:</p>
+                <ul class="list-group list-group-flush col-lg-6 mx-auto">
+                    <li class="list-group-item">1: 3.25</li>
+                    <li class="list-group-item">X: 3.3</li>
+                    <li class="list-group-item">2: 2.4</li>
+                </ul>
+                <br>
+                <p class="text-center">Let's define <strong>lim_down</strong> as 0.2 and <strong>lim_up</strong> as 0.6 and calculate probabilities.</p>
+                $$ {p_1 =\frac{1}{1 + \frac{3.25}{2.4} + \frac{3.25}{3.3}} \approx 0.3} $$
+                $$ {p_X =\frac{1}{1 + \frac{3.3}{2.4} + \frac{3.3}{3.25}} \approx 0.295} $$
+                $$ {p_2 =\frac{1}{1 + \frac{2.4}{3.25} + \frac{2.4}{3.3}} \approx 0.405} $$
+                <p class="text-center">Let's check first condition. It returns True.</p>
+                $$ {\left|p_1 - p_2\right| \approx 0.105 \leq 0.2} $$
+                <p class="text-center">Let's check second condition. It would return False.</p>
+                $$ {\left|p_1 - p_2\right| \approx 0.105 \geq 0.6} $$
+                <p class="text-center">According to odds, chances of every team are <strong>similar</strong>. Because of abs(p1-p2) is less than lim_down, <strong>let's bet on draw!</strong></p>
+                <h4 class="text-black my-2">Huddersfield 1 - 1 West Ham</h4>
+                <p class="text-center">Match ended with the result 1:1, so <strong>we would win</strong> e.g 50 * 3.3 = 165 units</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12 mx-auto">
+                <h3 class="text-black my-4">Historical analysis</h3>
+                <img src="{{ url_for('static', filename='img/pl1.png') }}" class="img-responsive" />
+                <img src="{{ url_for('static', filename='img/pl2.png') }}" class="img-responsive" />
+                <img src="{{ url_for('static', filename='img/pl3.png') }}" class="img-responsive" />
+                <img src="{{ url_for('static', filename='img/pl4.png') }}" class="img-responsive" />
+                <img src="{{ url_for('static', filename='img/pl5.png') }}" class="img-responsive" />
+                <img src="{{ url_for('static', filename='img/sum.png') }}" class="img-responsive" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col mx-auto">
+                <h3 class="text-black my-4">Bid types</h3>
+                <p class="text-center">In this tactics and simulations subpage two types of bids were used and tested:</p>
+                <ul class="list-group list-group-flush col-lg-8 mx-auto">
+                    <li class="list-group-item"><strong>Flat</strong> - e.g 50$ for every match</li>
+                    <li class="list-group-item"><strong>Kelly criterium</strong> - bid is set as budget percentage depends on probability<br><small>kelly_crit returns percentage value, it informs what part of our budget should we use, it is even 50% when it is high win probability</small></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</section>
 {% endblock %}
 
 {% block footer %}
@@ -113,7 +200,7 @@
             <a target="_blank" href="https://github.com/0bart" class="mx-2">
                 <i class="fab fa-github"></i>
             </a>
-            <a target="_blank" href="https://www.linkedin.com/in/bartłomiej-kopacz-43276312b" class="mx-2">
+            <a target="_blank" href="https://www.linkedin.com/in/bartlomiej-kopacz-43276312b" class="mx-2">
                 <i class="fab fa-linkedin"></i>
             </a>
             <a target="_blank" href="https://www.kaggle.com/bart00" class="mx-2">
@@ -137,6 +224,7 @@
     <script src="{{ url_for('static', filename='js/betapp.js') }}"></script>
     <script src="{{ url_for('static', filename='js/typewrite.js') }}"></script>
     <script src="{{ url_for('static', filename='js/counter.js') }}"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
 {% endblock %}
 {% endblock %} {# endblock body #}
 
