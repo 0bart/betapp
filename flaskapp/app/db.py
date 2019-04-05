@@ -14,7 +14,7 @@ results = client.betapp.results
 
 def get_fixture_n_matches(n, page):
     total = fixtures.count()
-    pipeline = [{"$sort": {"match_time": -1}}, {"$project": {"_id": 0, "home_team": 1, "away_team": 1, "match_time": 1,
+    pipeline = [{"$sort": {"match_time": 1}}, {"$project": {"_id": 0, "home_team": 1, "away_team": 1, "match_time": 1,
                                                              "score": 1, "probabilities": 1, "bets": 1,
                                                              "last_updated": 1}}, {'$skip': n * page}, {"$limit": n}]
     matches = fixtures.aggregate(pipeline)
