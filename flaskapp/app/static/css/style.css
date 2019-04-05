@@ -192,18 +192,41 @@
   width: 3rem;
 }
 
+/*.explain-section {
+  padding-top: 10rem;
+  background: -webkit-gradient(linear, left top, left bottom, from(#161616), color-stop(75%, rgba(22, 22, 22, 0.9)), to(rgba(22, 22, 22, 0.8)));
+  background: linear-gradient(to bottom, #161616 0%, rgba(22, 22, 22, 0.9) 75%, rgba(22, 22, 22, 0.8) 100%);
+}*/
+
+.explain-section {
+  padding: 5rem 0 5rem;
+}
+
+.explain-section code {
+    background: hsl(220, 80%, 90%);
+}
+
+.explain-section pre {
+    white-space:
+    background: hsl(30,80%,90%);
+}
+
 .tables-section {
   padding: 10rem 0;
 }
 
+.row-collapsible {
+  cursor: pointer;
+}
+
 @media (min-width: 768px) {
-  .tables-section h1 {
+  .tables-section h2 {
     padding: 1rem;
   }
 }
 
 @media (min-width: 992px) {
-  .tables-section h1 {
+  .tables-section h2 {
     padding: 1rem;
   }
 }

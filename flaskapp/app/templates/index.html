@@ -1,14 +1,12 @@
 {% extends "bootstrap/base.html" %}
 
 {% block head %}
-<!-- Custom fonts for this template -->
     {{ super() }}
 <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet" xmlns="http://www.w3.org/1999/html"
       xmlns="http://www.w3.org/1999/html">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 
-    <!-- Custom styles for this template -->
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 {% endblock %}
 
@@ -74,9 +72,9 @@
             <div class="col-md-4 mb-3 mb-md-0">
                 <div class="card py-4 h-100">
                     <div class="card-body text-center">
-                        <h2 class="text-uppercase m-0"><span class="count">3000</span></h2><h3><i class="fas fa-percentage"></i></h3>
+                        <h2 class="text-uppercase m-0"><span class="count">3200</span></h2><h3><i class="fas fa-percentage"></i></h3>
                         <hr class="my-4">
-                        <div class="small text-black-50">Last year gain</div>
+                        <div class="small text-black-50">Last two seasons gain</div>
                     </div>
                 </div>
             </div>
@@ -84,7 +82,7 @@
             <div class="col-md-4 mb-3 mb-md-0">
                 <div class="card py-4 h-100">
                     <div class="card-body text-center">
-                        <h2 class="text-uppercase m-0"><span class="count">44</span></h2><h3><i class="fas fa-percentage"></i></h3>
+                        <h2 class="text-uppercase m-0"><span class="count">37</span></h2><h3><i class="fas fa-percentage"></i></h3>
                         <hr class="my-4">
                         <div class="small text-black-50">Correctly bet draws</div>
                     </div>
@@ -94,7 +92,7 @@
             <div class="col-md-4 mb-3 mb-md-0">
                 <div class="card py-4 h-100">
                     <div class="card-body text-center">
-                        <h2 class="text-uppercase m-0"><span class="count">65</span></h2><h3><i class="fas fa-percentage"></i></h3>
+                        <h2 class="text-uppercase m-0"><span class="count">59</span></h2><h3><i class="fas fa-percentage"></i></h3>
                         <hr class="my-4">
                         <div class="small text-black-50">Correctly bet matches</div>
                     </div>
@@ -108,7 +106,7 @@
     <div class="container">
         <div class="row">
             <div class="col mx-auto">
-                <h2 class="text-black mb-4">System clarification</h2>
+                <h2 class="text-black mb-4">System explanation</h2>
                 <p class="text-justify">As you maybe know, odds are set <strong>according to players' types</strong>. If it is a lot of bets for home team,
                     odd goes down etc., because bookmaker always strive to average number of bets for every option. The
                     thing is that <strong>we can utilize</strong> this fact. People's average bets are often accurate. This fact is known as
@@ -131,7 +129,7 @@
                     <li class="list-group-item">1. If win probabilities of each team are similar, it means
                     $$ {\left|p_1 - p_2\right| \leq lim\_down} $$
                     bet on draw</li>
-                    <li class="list-group-item">2. Else if difference of probabilities are clear, it means
+                    <li class="list-group-item">2. Else if probability difference is clear, it means
                     $$ {\left|p_1 - p_2\right| \geq lim\_up} $$
                     bet on team with higher win probability</li>
                 </ul>
@@ -164,7 +162,7 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="row d-none d-sm-block">
             <div class="col-lg-12 mx-auto">
                 <h3 class="text-black my-4">Historical analysis</h3>
                 <img src="{{ url_for('static', filename='img/pl1.png') }}" class="img-responsive" />
@@ -212,11 +210,25 @@
 </section>
 
 <!-- Footer -->
-<footer class="bg-black small text-center text-white-50">
+<footer class="bg-black small">
     <div class="container">
-        Copyright &copy; bart0 2019
+        <div class="row">
+            <div class="col">
+                <p class="text-center text-white">The main goal of this app is my wish to learn and build fully automated app using microservices.</p>
+                <p class="text-center text-white">It is my hobby project, you cannot treat it as instigation for betting or invest advice.</p>
+                <p class="text-center text-white">I am not responsible for lost capital.</p>
+                <p class="text-center text-white">If you have any questions or remarks please contact me using one of above pages. Thank you.</p>
+            </div>
+        </div>
+        <div class="row text-center text-white-50">
+            <div class="col">
+                Copyright &copy; 0bart 2019
+            </div>
+        </div>
     </div>
 </footer>
+
+<script type="text/javascript" id="cookieinfo" src="//cookieinfoscript.com/js/cookieinfo.min.js"></script>
 {% endblock %}
 
 {% block scripts %}
