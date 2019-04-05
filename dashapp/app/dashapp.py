@@ -14,17 +14,12 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-colors = {
-    'background': '#111111',
-    'text': '#7FDBFF'
-}
-
 app.layout = html.Div(children=[
     dcc.DatePickerRange(id="dates",
-                        min_date_allowed=datetime(2019, 1, 1),
+                        min_date_allowed=datetime(2013, 8, 1),
                         max_date_allowed=datetime.today().strftime('%Y-%m-%d'),
-                        start_date=(datetime.today() - timedelta(days=60)).strftime('%Y-%m-%d'),
-                        end_date=datetime.today().strftime('%Y-%m-%d')
+                        start_date=datetime(2017, 8, 1), #(datetime.today() - timedelta(days=60)).strftime('%Y-%m-%d'),
+                        end_date=datetime(2018, 6, 30) #datetime.today().strftime('%Y-%m-%d')
                         ),
     html.Div([
         html.Div([
@@ -33,7 +28,7 @@ app.layout = html.Div(children=[
         ], style={'display': 'block'}),
         html.Div([
             html.Label('# matches?', htmlFor="n"),
-            dcc.Input(placeholder='How many matches?', id="n", value=10, type="number")
+            dcc.Input(placeholder='How many matches?', id="n", value=150, type="number")
         ], style={'display': 'block'}),
         html.Div([
             html.Label('Bid type', htmlFor="bid_type"),
@@ -52,11 +47,10 @@ app.layout = html.Div(children=[
      Input('dates', 'start_date'),
      Input('dates', 'end_date')])
 def update_figure(n, bid_base, bid_type, start_date, end_date):
-    #with open('MOCK_DATA.json') as infile:
-    #    data = json.load(infile)
+
     start_date = datetime.strptime(start_date, '%Y-%m-%d')
     end_date = datetime.strptime(end_date, '%Y-%m-%d')
-    #X, Y, text = gather_data_for_plot(data, n, bid_type, bid_base)
+
     X, Y, text = get_last_n_matches_for_plot(n, bid_base, bid_type, start_date=start_date, end_date=end_date)
 
     return {
