@@ -1,18 +1,10 @@
-FROM python:3.6-slim
+FROM alpine:3.7
 
 COPY . /
 
-RUN apt-get clean \
-    && apt-get -y update
+RUN apk add --no-cache python3-dev build-base linux-headers pcre-dev python3
+RUN pip3 install --no-cache-dir -r /requirements.txt
 
-RUN apt-get -y install nginx \
-    && apt-get -y install python3-dev \
-    && apt-get -y install build-essential
+EXPOSE 4000
 
-RUN pip install -r /requirements.txt
-
-COPY nginx.conf /etc/nginx
-RUN chmod +x ./start.sh
-
-CMD ["./start.sh"]
-
+CMD [ "uwsgi", "--ini", "uwsgi.ini"]
