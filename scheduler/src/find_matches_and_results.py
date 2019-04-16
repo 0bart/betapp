@@ -16,12 +16,28 @@ client = pymongo.MongoClient(db_string)
 fixtures = client.betapp.fixtures
 results = client.betapp.results
 
-def convert_team_name(nameTeam):
-    nameTeam = nameTeam.replace(' FC', '')
-    nameTeam = nameTeam.replace('AFC ', '')
-    nameTeam = nameTeam.replace(' AFC', '')
-    nameTeam = nameTeam.replace('&', 'and')
-    return nameTeam
+MAPPER = {
+    'Arsenal': 'Arsenal FC',
+    'Bournemouth': 'AFC Bournemouth',
+    'Brighton and Hove Albion': 'Brighton & Hove Albion FC',
+    'Burnley': 'Burnley FC',
+    'Cardiff City': 'Cardiff City FC',
+    'Chelsea': 'Chelsea FC',
+    'Crystal Palace': 'Crystal Palace FC',
+    'Everton': 'Everton FC',
+    'Fulham': 'Fulham FC',
+    'Huddersfield Town': 'Huddersfield Town AFC',
+    'Leicester City': 'Leicester City FC',
+    'Liverpool': 'Liverpool FC',
+    'Manchester City': 'Manchester City FC',
+    'Manchester United': 'Manchester United FC',
+    'Newcastle United': 'Newcastle United FC',
+    'Southampton': 'Southampton FC',
+    'Tottenham Hotspur': 'Tottenham Hotspur FC',
+    'Watford': 'Watford FC',
+    'West Ham United': 'West Ham United FC',
+    'Wolverhampton Wanderers': 'Wolverhampton Wanderers FC'
+}
 
 
 def predict_result(odd_H, odd_A, odd_D, prob_down=0.17, prob_up=0.36):
@@ -38,7 +54,7 @@ def predict_result(odd_H, odd_A, odd_D, prob_down=0.17, prob_up=0.36):
         return p1, p2, pX, 'SKIP'
 
 
-def find_matches():
+def gather_fixture_matches_and_add_to_db():
 
     api_key = conf['find_matches']['api_key']
     uri = conf['find_matches']['uri'].format(api_key)
@@ -52,20 +68,23 @@ def find_matches():
     for match in result['data']:
         match_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(match['commence_time']))
         home_team = match['home_team']
-        index_ = match['teams'].index(home_team)
-        away_team = match['teams'][1-index_]
-        #away_team = [team for team in match['teams'] if team != home_team][0]
+        home_team_index = match['teams'].index(home_team)
+        away_team = match['teams'][1-home_team_index]
+        home_team = MAPPER[home_team]
+        away_team = MAPPER[away_team]
         bets = []
         probs = []
         for bookmaker in match['sites']:
-            odd1_H, odd1_A, odd1_D, odd1_name = bookmaker['odds']['h2h'][index_], bookmaker['odds']['h2h'][1-index_], \
-                                                bookmaker['odds']['h2h'][2], bookmaker['site_nice']
+            odd1_H = bookmaker['odds']['h2h'][home_team_index]
+            odd1_A = bookmaker['odds']['h2h'][1-home_team_index]
+            odd1_D = bookmaker['odds']['h2h'][2]
+            odd1_name = bookmaker['site_nice']
             p1, p2, pX, prediction = predict_result(odd1_H, odd1_A, odd1_D)
             _bets = {
                 "bet_name": odd1_name,
                 "bet_home": odd1_H,
-                "bet_draw": odd1_A,
-                "bet_away": odd1_D
+                "bet_away": odd1_A,
+                "bet_draw": odd1_D
             }
             _probs = {
                 "prediction": prediction,
@@ -75,32 +94,30 @@ def find_matches():
             }
             bets.append(_bets)
             probs.append(_probs)
-        hashs = "{}, {} - {}".format(match_time, home_team, away_team)
+        hashs = "{}, {} - {}".format(match_time[:10], home_team, away_team)
         match_hash = hashlib.md5(hashs.encode('utf-8')).hexdigest()[-16:]
 
         doc = {
-              'match_time': datetime.datetime.utcfromtimestamp(match['commence_time']).replace(tzinfo=datetime.timezone.utc),
+              'match_time': datetime.datetime.strptime(match_time, '%Y-%m-%d %H:%M:%S'),
               'home_team': home_team,
               'away_team': away_team,
               'bets': bets,
               'probabilities': probs,
               'match_hash': match_hash,
               'last_updated': time.strftime('%H:%M:%S')
-              }
+        }
 
         update_one_output = fixtures.update_one({'match_hash': match_hash}, {'$set': doc}, upsert=True)
         matched_count += update_one_output.matched_count
         modified_count += update_one_output.modified_count
 
-    return 
 
+def gather_results_of_matches_and_add_to_db():
 
-def find_results():
+    date_from = (datetime.date.today() - datetime.timedelta(1)).strftime('%Y-%m-%d')
+    date_to = datetime.date.today().strftime('%Y-%m-%d')
 
-    dateFrom = (datetime.date.today() - datetime.timedelta(1)).strftime('%Y-%m-%d')
-    dateTo = datetime.date.today().strftime('%Y-%m-%d')
-
-    uri = conf['find_results']['uri'].format(dateFrom, dateTo)
+    uri = conf['find_results']['uri'].format(date_from, date_to)
     api_key = conf['find_results']['api_key']
     headers = {'X-Auth-Token': api_key}
     
@@ -109,12 +126,12 @@ def find_results():
 
     matched_count = 0
     modified_count = 0
-    
+
     for item in result['matches']:
-        match_time = item['utcDate'].replace('T', ' ')[0:-1]
-        home_team = convert_team_name(item['homeTeam']['name'])
-        away_team = convert_team_name(item['awayTeam']['name'])
-        hashs = "{}, {} - {}".format(match_time, home_team, away_team)
+        match_time = item['utcDate']
+        home_team = item['homeTeam']['name']
+        away_team = item['awayTeam']['name']
+        hashs = "{}, {} - {}".format(match_time[:10], home_team, away_team)
         match_hash = hashlib.md5(hashs.encode('utf-8')).hexdigest()[-16:]
 
         doc = {
@@ -138,12 +155,11 @@ def find_results():
         else:
             pass
 
-    return
 
-
-schedule.every().day.at("08:00").do(find_matches)
-schedule.every().hour.do(find_results)
+schedule.every().day.at("08:00").do(gather_fixture_matches_and_add_to_db)
+schedule.every().hour.do(gather_results_of_matches_and_add_to_db)
 
 while True:
     schedule.run_pending()
-    time.sleep(5)
+    time.sleep(100)
+
