@@ -1,7 +1,8 @@
 import json
 import pymongo
+from app import app
 
-with open('config.json') as file_conf:
+with open('app/config.json') as file_conf:
     conf = json.load(file_conf)
 
 db_string = 'mongodb://{}:{}@{}:{}'.format(conf['mongo']['user'], conf['mongo']['pwd'],

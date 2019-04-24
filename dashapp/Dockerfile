@@ -1,11 +1,10 @@
-FROM python:3.6-alpine
+FROM alpine:3.7
 
 COPY . /
 
-RUN pip install -r /requirements.txt
+RUN apk add --no-cache python3-dev build-base linux-headers pcre-dev python3
+RUN pip3 install --no-cache-dir -r /requirements.txt
 
-WORKDIR /app
+EXPOSE 4050
 
-EXPOSE 8050
-
-CMD ["python", "./dashapp.py"]
+CMD [ "uwsgi", "--ini", "uwsgi.ini"]
