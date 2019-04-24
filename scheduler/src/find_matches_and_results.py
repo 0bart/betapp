@@ -156,7 +156,7 @@ def gather_results_of_matches_and_add_to_db():
             pass
 
 
-schedule.every().day.at("08:00").do(gather_fixture_matches_and_add_to_db)
+schedule.every().day.at("14:00").do(gather_fixture_matches_and_add_to_db)
 schedule.every().hour.do(gather_results_of_matches_and_add_to_db)
 
 while True:
