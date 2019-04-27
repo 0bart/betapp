@@ -1,25 +1,20 @@
-import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 
 from datetime import datetime, timedelta
-
-from db import get_last_n_matches_for_plot 
 import json
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-
-
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+from app import app
+from app.db import get_last_n_matches_for_plot 
 
 app.layout = html.Div(children=[
     dcc.DatePickerRange(id="dates",
                         min_date_allowed=datetime(2013, 8, 1),
                         max_date_allowed=datetime.today().strftime('%Y-%m-%d'),
-                        start_date=datetime(2017, 8, 1), #(datetime.today() - timedelta(days=60)).strftime('%Y-%m-%d'),
-                        end_date=datetime(2018, 6, 30) #datetime.today().strftime('%Y-%m-%d')
+                        start_date=datetime(2017, 8, 1),
+                        end_date=datetime(2018, 6, 30)
                         ),
     html.Div([
         html.Div([
@@ -80,5 +75,3 @@ def update_figure(n, bid_base, bid_type, start_date, end_date):
         )
     }
 
-if __name__ == '__main__':
-    app.run_server(host='0.0.0.0', port=8050)
